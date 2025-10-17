@@ -21,8 +21,8 @@ class Usuario(models.Model):
     ]
 
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name='usuarios')
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, null=True, blank=True)
+    apellido = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(unique=True)
     password_hash = models.CharField(max_length=255, null=True, blank=True)
     telefono = models.CharField(max_length=50, null=True, blank=True)
