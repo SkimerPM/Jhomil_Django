@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+import uuid
 # -----------------------------
 # 1) Usuarios y Roles
 # -----------------------------
@@ -37,6 +37,18 @@ class Usuario(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
+class RefreshToken(models.Model):
+    token = models.CharField(max_length=128, unique=True, default=uuid.uuid4)
+    user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='refresh_tokens')
+    created = models.DateTimeField(auto_now_add=True)
+    expires = models.DateTimeField()
+    revoked = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return self.expires < timezone.now() or self.revoked
+
+    def __str__(self):
+        return f'{self.user.email} - {self.token}'
 
 # -----------------------------
 # 2) Catálogo de productos
