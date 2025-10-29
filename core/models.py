@@ -245,7 +245,7 @@ class Promocion(models.Model):
     TIPOS_DESCUENTO = [
         ('porcentaje', 'Porcentaje'),
         ('monto_fijo', 'Monto Fijo'),
-        ('dos_por_uno', '2x1'), # Nuevo tipo
+        ('x_por_y', '(2x1, 3x2, etc.)'), # Nnuevo nombre
     ]
     
     nombre = models.CharField(max_length=150)
@@ -270,10 +270,35 @@ class Promocion(models.Model):
 class PromocionProducto(models.Model):
     # Relación M:M para especificar a qué productos o variantes aplica la promoción
     promocion = models.ForeignKey(Promocion, on_delete=models.CASCADE)
+
+    # Puedes aplicar la promoción a un producto o a una variante específica
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=True)
     variante = models.ForeignKey(ProductoVariante, on_delete=models.CASCADE, null=True, blank=True)
-    
+    # Producto o variante de regalo (para 2x1 u ofertas cruzadas)
+    producto_gratis = models.ForeignKey(
+        Producto,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="promociones_gratis"
+    )
+    variante_gratis = models.ForeignKey(
+        ProductoVariante,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="promociones_gratis_variante"
+    )
+
+    cantidad_requerida = models.IntegerField(default=1)  # ej: “compra 2”
+    cantidad_gratis = models.IntegerField(default=1)     # ej: “lleva 1”
+
     class Meta:
         verbose_name_plural = "Productos en Promoción"
+
+    def __str__(self):
+        target = self.variante or self.producto
+        return f"{self.promocion.nombre} → {target}"
 
 
 # -----------------------------
