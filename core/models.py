@@ -59,6 +59,7 @@ class Categoria(models.Model):
     slug = models.SlugField(unique=True)
     id_padre = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='subcategorias')
     descripcion = models.TextField(null=True, blank=True)
+    imagen_url_base = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.nombre
@@ -390,7 +391,7 @@ class Pago(models.Model):
     referencia_externa = models.CharField(max_length=255, null=True, blank=True)
     usuario_verificador = models.ForeignKey(Usuario, null=True, blank=True, on_delete=models.SET_NULL, related_name='pagos_validados')
     fecha_validacion = models.DateTimeField(null=True, blank=True)
-
+    
 
 # -----------------------------
 # 5) Envíos y comprobantes
