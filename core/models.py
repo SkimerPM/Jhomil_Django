@@ -67,7 +67,7 @@ class Categoria(models.Model):
 
 class Marca(models.Model):
     nombre = models.CharField(max_length=150, unique=True)
-
+    imagen_logo = models.CharField(max_length=500, null=True, blank=True)
     def __str__(self):
         return self.nombre
 
