@@ -313,6 +313,12 @@ class Carrito(models.Model):
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     activo = models.BooleanField(default=True)
 
+    # --- AGREGA ESTO ---
+    # Para persistir el cupón entre recargas de página
+    cupon_codigo = models.CharField(max_length=50, null=True, blank=True)
+    # Para saber cuánto descontar al final sin recalcular todo cada vez
+    descuento_global_aplicado = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
 
 class CarritoItem(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
