@@ -31,6 +31,7 @@ class Usuario(models.Model):
     metodo_registro = models.CharField(max_length=10, choices=METODOS_REGISTRO, default='local')
     google_id = models.CharField(max_length=255, null=True, blank=True)
     foto_perfil = models.URLField(max_length=512, null=True, blank=True)
+    email_verificado = models.BooleanField(default=False) #nuevo campo para intento de verificar email ;)
     activo = models.BooleanField(default=True)
     fecha_registro = models.DateTimeField(default=timezone.now)
     ultimo_acceso = models.DateTimeField(null=True, blank=True)
@@ -47,6 +48,31 @@ class RefreshToken(models.Model):
 
     def is_expired(self):
         return self.expires < timezone.now() or self.revoked
+
+    def __str__(self):
+        return f'{self.user.email} - {self.token}'
+
+class EmailVerificationToken(models.Model):
+    token = models.CharField(
+        max_length=128,
+        unique=True,
+        default=uuid.uuid4
+    )
+    user = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='email_verification_tokens'
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    expires = models.DateTimeField()
+    used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'core_email_verification_token'
+
+    def is_expired(self):
+        return self.expires < timezone.now() or self.used
 
     def __str__(self):
         return f'{self.user.email} - {self.token}'
